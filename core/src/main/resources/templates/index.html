@@ -57,6 +57,7 @@
     </section>
 </div>
 
+<script src="/3rdparty/reveal-js/js/jquery-1.11.3.min.js"></script>
 <script src="/3rdparty/reveal-js/lib/js/head.min.js"></script>
 <script src="/3rdparty/reveal-js/js/reveal.js"></script>
 
@@ -80,6 +81,14 @@
             { src: '/3rdparty/reveal-js/plugin/zoom-js/zoom.js', async: true },
             { src: '/3rdparty/reveal-js/plugin/notes/notes.js', async: true }
         ]
+    });
+
+    $(document).ready( function (){
+        $(document).keydown(function (eventObj){
+           if (eventObj.keyCode == 13) {
+               $("section.present iframe")[0].contentWindow.codeMirror.focus()
+           }
+        });
     });
 </script>
 </body>

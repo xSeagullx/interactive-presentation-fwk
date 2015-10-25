@@ -17,20 +17,21 @@
         }
         .CodeMirror {
             font-size: 24px;
-            height: 100%;
         }
 
+        body,
         #output,
         .cm-s-vibrant-ink.CodeMirror {
             background: rgb(17, 17, 17);
         }
-
         #output {
+            height: 100%;
+            width: 100%;
             font-size: 24px;
             color: yellow;
             padding-top: 1em;
         }
-        .error {
+        #output.error {
             color: red;
         }
     </style>
@@ -49,7 +50,9 @@
                 println('Hello world!')
             </textarea>
         </div>
-        <div id="output" class="row">Empty</div>
+        <div class="row output-row">
+            <pre id="output"></pre>
+        </div>
     </div>
 
     <script>
@@ -64,6 +67,7 @@
         theme: 'vibrant-ink',
         lineWrapping: true,
         lineNumbers: true,
+        viewportMargin: 12,
         extraKeys: {
             'Ctrl-Enter': runScript,
             'Cmd-Enter': runScript,
@@ -72,6 +76,9 @@
             'Ctrl-/' : lineComment,
             "Ctrl-Q": function(cm) {
                 cm.foldCode(cm.getCursor());
+            },
+            "Esc": function(cm) {
+                window.parent.focus()
             }
         },
         lineComment: "//",
@@ -84,7 +91,8 @@
         gutters: [ "CodeMirror-linenumbers", "CodeMirror-foldgutter", "CodeMirror-lint-markers" ],
         indentUnit: 4,
         tabSize: 4,
-        keyMap: "sublime"
+        keyMap: "sublime",
+        transitionSpeed: 'fast'
     });
 
     function displayOutput(data) {
@@ -112,7 +120,7 @@
                 clearInterval(timerId);
 
         }, 5000 / 10);
-        $.ajax("/code/exec", { // TODO proper link
+        $.ajax("/code/exec", {
             type: "POST",
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
