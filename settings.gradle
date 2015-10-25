@@ -1,4 +1,3 @@
 rootProject.name = 'presentation-fwk'
 
 include ":core"
-include ":example"

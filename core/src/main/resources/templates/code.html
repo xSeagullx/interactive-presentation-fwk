@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<!--suppress HtmlUnknownTarget -->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="/3rdparty/codemirror/lib/codemirror.css" />
+    <link rel="stylesheet" href="/3rdparty/codemirror/theme/vibrant-ink.css" />
+    <link rel="stylesheet" href="/3rdparty/codemirror/addon/fold/foldgutter.css" />
+    <link rel="stylesheet" href="/3rdparty/codemirror/addon/lint/lint.css" />
+    <link rel="stylesheet" href="/3rdparty/codemirror/addon/hint/show-hint.css" />
+    <link rel="stylesheet" href="/3rdparty/reveal-js/css/bootstrap.css" />
+
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+        .CodeMirror {
+            font-size: 24px;
+            height: 100%;
+        }
+
+        #output,
+        .cm-s-vibrant-ink.CodeMirror {
+            background: rgb(17, 17, 17);
+        }
+
+        #output {
+            font-size: 24px;
+            color: yellow;
+            padding-top: 1em;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+
+    <script src="/3rdparty/reveal-js/js/jquery-1.11.3.min.js"></script>
+    <script src="/3rdparty/codemirror/lib/codemirror.js"></script>
+    <script src="/3rdparty/codemirror/keymap/sublime.js"></script>
+    <script src="/3rdparty/codemirror/addon/comment/comment.js"></script>
+    <script src="/3rdparty/codemirror/addon/display/fullscreen.js"></script>
+    <script src="/3rdparty/codemirror/mode/groovy/groovy.js"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="CodeMirror row cm-s-default CodeMirror-wrap">
+            <textarea class="code" name="script" rows="5" th:text="${ code }">
+                println('Hello world!')
+            </textarea>
+        </div>
+        <div id="output" class="row">Empty</div>
+    </div>
+
+    <script>
+    var codeMirror;
+    var lineComment = function() {
+        // Throw called toggle, it's actually just comment.
+        codeMirror.lineComment(codeMirror.getCursor(true), codeMirror.getCursor(false), { lineComment: "//" })
+    };
+
+    codeMirror = CodeMirror.fromTextArea($(".code")[0], {
+        mode : "groovy",
+        theme: 'vibrant-ink',
+        lineWrapping: true,
+        lineNumbers: true,
+        extraKeys: {
+            'Ctrl-Enter': runScript,
+            'Cmd-Enter': runScript,
+            "Ctrl-Space": "autocomplete",
+            'Cmd-/' : lineComment,  // FIXME use "toggleComment" and somehow provide comment to groovy mode.
+            'Ctrl-/' : lineComment,
+            "Ctrl-Q": function(cm) {
+                cm.foldCode(cm.getCursor());
+            }
+        },
+        lineComment: "//",
+        lint: true,
+        matchBrackets: true,
+        autoCloseBrackets: true,
+        foldGutter: true,
+        scanUp: true,
+        continueComments: true,
+        gutters: [ "CodeMirror-linenumbers", "CodeMirror-foldgutter", "CodeMirror-lint-markers" ],
+        indentUnit: 4,
+        tabSize: 4,
+        keyMap: "sublime"
+    });
+
+    function displayOutput(data) {
+        var $output = $('#output');
+        $output.html(data.out);
+        if (data.hasError)
+            $output.addClass("error");
+        else
+            $output.removeClass("error");
+    }
+
+    function runScript() {
+        codeMirror.save();
+        var progress = $('.progress');
+        var bar = progress.find('.progress-bar');
+        bar.attr("style", 'width: 0%;');
+        bar.html("");
+        progress.toggle();
+        var val = 0;
+        var timerId = setInterval(function() {
+            val++;
+            bar.attr("style", 'width: ' + (val * 10) + '%;');
+            bar.html(val * 10);
+            if (val >= 10)
+                clearInterval(timerId);
+
+        }, 5000 / 10);
+        $.ajax("/code/exec", { // TODO proper link
+            type: "POST",
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(
+                    { script: codeMirror.getValue() }
+            ),
+            success: displayOutput,
+            error: displayOutput,
+            complete: function() {
+                progress.toggle();
+                clearInterval(timerId);
+            }
+        });
+    }
+    </script>
+</body>
+</html>

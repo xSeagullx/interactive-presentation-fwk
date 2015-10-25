@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+<!--suppress HtmlUnknownTarget -->
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8"/>
 
-    <title th:text="${ $.title }"/>
+    <title th:text="${ title }"/>
 
     <meta name="description" content="Presentation - proposal about Model-driven design and nanoservice architecture."/>
     <meta name="author" content="Pavel Dionisev. CERN"/>
@@ -15,7 +16,7 @@
 
     <link rel="stylesheet" href="/3rdparty/reveal-js/css/bootstrap.css"/>
     <link rel="stylesheet" href="/3rdparty/reveal-js/css/reveal.css"/>
-    <link rel="stylesheet" href="/3rdparty/reveal-js/css/theme/serif.css" id="theme"/>
+    <link rel="stylesheet" href="/3rdparty/reveal-js/css/theme/night.css" id="theme"/>
 
     <!-- Code syntax highlighting -->
     <link rel="stylesheet" href="/3rdparty/reveal-js/lib/css/zenburn.css" />
@@ -40,19 +41,19 @@
         .two-columns ul {
             vertical-align: top;
         }
-        body {
-            background: -webkit-linear-gradient(antiquewhite, #ffd48f); /* For Safari 5.1 to 6.0 */
-            background: -o-linear-gradient(antiquewhite, #ffd48f); /* For Opera 11.1 to 12.0 */
-            background: -moz-linear-gradient(antiquewhite, #ffd48f); /* For Firefox 3.6 to 15 */
-            background: linear-gradient(antiquewhite, #ffd48f); /* Standard syntax */
-        }
+        /*body {*/
+            /*background: -webkit-linear-gradient(antiquewhite, #ffd48f); /!* For Safari 5.1 to 6.0 *!/*/
+            /*background: -o-linear-gradient(antiquewhite, #ffd48f); /!* For Opera 11.1 to 12.0 *!/*/
+            /*background: -moz-linear-gradient(antiquewhite, #ffd48f); /!* For Firefox 3.6 to 15 *!/*/
+            /*background: linear-gradient(antiquewhite, #ffd48f); /!* Standard syntax *!/*/
+        /*}*/
     </style>
 </head>
 <body>
 <div class="reveal">
     <!-- Any section element inside of this container is displayed as a slide -->
     <section class="slides">
-        <section th:each="slide : ${ $.slides }" th:utext="${ slide.html }"></section>
+        <section th:replace="slides">Hello world</section>
     </section>
 </div>
 
