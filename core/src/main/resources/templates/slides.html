@@ -1,7 +1,258 @@
-<section>Hello world!!!</section>
-<section>
-    <iframe class="stretch" src="/code/code1"></iframe>
+<section><h2><span>println </span><span>'Hello world!'</span></h2></section>
+<section title="Whats up?">
+    <div><img src="/assets/Groovy-logo.svg" style="background-color: lightgray" /></div>
+    <div class="fragment row">
+        <h2 class="fragment grow col-lg-6">Dynamic</h2>
+        <h2 class="fragment grow col-lg-6">Static</h2>
+    </div>
+    <div class="fragment row">
+        <h2 class="fragment grow col-lg-6">Imperative</h2>
+        <h2 class="fragment grow col-lg-6">Functional</h2>
+    </div>
+    <h1 class="fragment"><strong>Simple!</strong></h1>
+</section>
+<section title="Who am I?">
+    <div class="fragment grow">Software Developer at CERN</div>
+    <div class="fragment grow">Java™ 5 years</div>
+    <div class="fragment grow">Groovy 3.5 years</div>
+    <div class="fragment grow">Involvement in Groovy Community</div>
+    <div class="fragment grow">C/C++ / Lua / AS3 / Scala experience</div>
+    <div class="fragment">3 years ago - JINR School student!</div>
+    <div class="fragment">Just like <strong>you</strong>…</div>
+</section>
+<section title="">
+    <h1><strong>Who are you?</strong></h1>
 </section>
 <section>
-    <iframe class="stretch" src="/code/code2"></iframe>
+    <section title="Why Java?">
+        <div class="fragment grow">Big demand on Job market</div>
+        <div class="fragment grow">Strongest community</div>
+        <div class="fragment grow">Good tooling</div>
+        <div class="fragment grow">Easy to learn after any C-like lang</div>
+        <h2 class="fragment">Used everywhere</h2>
+        <div class="row fragment">
+            <div class="col-lg-3"><img src="/assets/enterprise.png"/>Enterprise</div>
+            <div class="col-lg-3"><img src="/assets/Android.png"/>Mobile</div>
+            <div class="col-lg-3"><img src="/assets/eclipse.ico"/>Desktop</div>
+            <div class="col-lg-3"><img src="/assets/Minecraft.png"/>Games</div>
+        </div>
+    </section>
+    <section title="What's wrong? Or just why?">
+        <div class="fragment grow">Old verbose language?</div>
+        <div class="fragment grow">Strong Infrastructure!</div>
+        <div class="fragment">
+            <div>…Slow development…</div>
+            <div><img src="/assets/turtle.jpg" /></div>
+        </div>
+        <!--<note>Talk about perfect infrastructure, getting things done with any library you like.-->
+        <!--2 words about Java lambda's and dissapointment. What's next? JigSaw! Say, that you're happy with it, as it's a platform improvement. </note>-->
+    </section>
+    <section title="Alternatives">
+        <!--That's why we see whole bunch of new JVM-targeted languages. (Scala, Groovy, Kotlin, Ceylon, JRuby, JPyton, JLua, etc…).-->
+        <!--All of them are aiming to reuse Java as a platform, but give a better syntax and capabilities to work with.-->
+        <section><img class="stretch" src="/assets/jvm-languages.jpg"/></section>
+        <section><h2>And Groovy is actually Java. Just way better Java.</h2></section>
+    </section>
+</section>
+<section title="">
+    <h1>Groovy for Scripting</h1>
+</section>
+<section>
+    <section>
+        <h2>Collections</h2>
+    </section>
+    <section title="Collections. Java List">
+        <iframe class="stretch" src="/code/code1(collection).groovy"></iframe>
+    </section>
+    <section title="Collections. Groovy List">
+        <iframe class="stretch" src="/code/code2(collection).groovy"></iframe>
+    </section>
+    <section title="Collections 2. Java Maps.">
+        <iframe class="stretch" src="/code/maps.groovy"></iframe>
+    </section>
+    <section title="Collections 2. Groovy Maps.">
+        <iframe class="stretch" src="/code/maps2.groovy"></iframe>
+    </section>
+</section>
+<section title="String interpolation(GStrings)">
+    <iframe class="stretch" src="/code/gstrings.groovy"></iframe>
+</section>
+<section>
+    <section>
+        <h1>Closures</h1>
+    </section>
+    <section title="Closures 1">
+        <iframe class="stretch" src="/code/closures.groovy"></iframe>
+    </section>
+    <section title="Closures 2">
+        <iframe class="stretch" src="/code/closures2.groovy"></iframe>
+    </section>
+    <section title="Closures 3">
+        <iframe class="stretch" src="/code/closures3.groovy"></iframe>
+    </section>
+    <section title="Java 8 and Closures">
+        <iframe class="stretch" src="/code/streamAPI.groovy"></iframe>
+    </section>
+    <section title="Memoization">
+        <iframe class="stretch" src="/code/memoization.groovy"></iframe>
+    </section>
+    <section title="Stack Overflow">
+        <iframe class="stretch" src="/code/trampoline.groovy"></iframe>
+    </section>
+    <section title="Trampoline">
+        <iframe class="stretch" src="/code/trampoline2.groovy"></iframe>
+    </section>
+</section>
+
+<!--### XML processing-->
+<section>
+    <section>
+        <h1>XML and Co.</h1>
+    </section>
+    <section title="XML parser">
+        <iframe class="stretch" src="/code/xmlRead.groovy"></iframe>
+    </section>
+    <section title="Builders">
+        <iframe class="stretch" src="/code/code2(builder).groovy"></iframe>
+    </section>
+    <section title="">
+        <h2>Same for JSON and YAML</h2>
+    </section>
+</section>
+<section>
+    <section>
+        <h1>File and Urls</h1>
+    </section>
+    <section title="Files">
+        <iframe class="stretch" src="/code/files.groovy"></iframe>
+    </section>
+    <section title="and URL's">
+        <iframe class="stretch" src="/code/urls.groovy"></iframe>
+    </section>
+</section>
+<section>
+    <section>
+        <h1>Nice and easy</h1>
+    </section>
+    <section title="Truth">
+        <iframe class="stretch" src="/code/truth.groovy"></iframe>
+    </section>
+    <section title="Map Constructor">
+        <iframe class="stretch" src="/code/mapConstr.groovy"></iframe>
+    </section>
+    <section title="Traits">
+        <iframe class="stretch" src="/code/traits.groovy"></iframe>
+    </section>
+    <section title="Multi-Methods">
+        <iframe class="stretch" src="/code/multiMethods.groovy"></iframe>
+    </section>
+</section>
+<section>
+    <section title="">
+        <h1>Groovy for Web</h1>
+    </section>
+    <section>
+        <h2>Grails</h2>
+        <ul>
+            <li class="fragment grow">Convention over configuraton</li>
+            <li class="fragment grow">Fast and easy</li>
+            <li class="fragment grow">Holistic approach (includes ORM, templates, controller-logic, resource pipeline, testing)</li>
+        </ul>
+    </section>
+    <section>
+        <h2>Spring MVC + Spring Boot</h2>
+        <ul>
+            <li class="fragment grow">Freedom</li>
+            <li class="fragment grow">We still love syntax</li>
+            <li class="fragment grow">Standalone gsp / GORM</li>
+        </ul>
+    </section>    
+</section>
+<section title="">
+    <h2>Groovy for Enterprise</h2>
+    <ul>
+        <li class="fragment grow">Main Goal of enterprize is <strong>Quality</strong></li>
+        <li class="fragment grow">Quality means Testing</li>
+    </ul>
+</section>
+<section>
+    <section>
+      <h1><strong>Q:</strong> What happens w/o Testing?</h1>  
+    </section>
+    <section>
+      <img src="/assets/nuke2.gif" />
+      <audio data-autoplay="true" src="/assets/bomb.mp3"></audio>
+    </section>
+</section>
+<section>
+    <section title="JUnit">
+        <h1>JUnit</h1>
+        <h3>Most downloaded Java test library.</h3>
+        <h4>Good tooling support(reports, statistics etc.)</h4>
+    </section>
+    <section title="Groovy testing">
+        <ul>
+            <li class="fragment grow">Power assert</li>
+            <li class="fragment grow">Private access</li>
+            <li class="fragment grow">String names</li>
+        </ul>
+    </section>
+    <section title="Assertions">
+        <iframe class="stretch" src="/code/assert.groovy"></iframe>
+    </section>
+    <section>
+        <h2>Code time</h2>
+    </section>
+</section>
+<section>
+    <h2>Specification based testing</h2>
+    <ul>
+        <li class="fragment grow">Structured and Readable == Comprehensive</li>
+        <li class="fragment grow">Data and/or Interaction Driven</li>
+        <li class="fragment grow">Allow Stubbing Mocking and Spying out of box</li>
+        <li class="fragment grow">Compatible with existing tools</li>
+    </ul>
+</section>
+<section title="Geb">
+    <h1>Browser automating</h1>
+    <ul class="fragment">
+        <li>Functional Testing</li>
+        <li>Scraping(ask João)</li>
+    </ul>
+</section>
+
+<!--### Swing builder-->
+
+<!--### DSL's: GORM, Gradle.-->
+<section>
+    <section>
+        <h2>Main Reason for Love<i class="glyphicon glyphicon-heart" style="color: red"/></h2>
+        <h3 class="fragment">DSL</h3>
+        <h4 class="fragment">Domain Specific Languages</h4>
+    </section>
+    <section title="Gradle">
+        <iframe class="stretch codemirror-fullscreen" src="/code/gradle.groovy"></iframe>
+    </section>
+    <section>
+        <h2>Examples</h2>
+        <div class="fragment grow">Gradle in GridWars project</div>
+        <div class="fragment grow">GORM - Grails ORM langauage</div>
+        <div class="fragment grow">Define yours</div>
+    </section>
+    <section title="AST Transform">
+        <iframe class="stretch" src="/code/astTransform.groovy"></iframe>
+    </section>
+    <section title="AST Macro">
+        <h2>AST Macro (Thanks to Cedric and Sergey)</h2>
+        <h4>Coming soon... Groovy 2.5 (next major release)</h4>
+    </section>
+    <section title="Meta-Programming">
+        <iframe class="stretch" src="/code/mop.groovy"></iframe>
+    </section>
+</section>
+<section>
+    <img class="stretch" src="/assets/fin.jpg" />
+</section>
+<section title="Custom code time">
+    <iframe class="stretch" src="/code/custom.groovy"></iframe>
 </section>

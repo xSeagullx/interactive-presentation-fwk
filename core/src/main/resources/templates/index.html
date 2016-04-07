@@ -41,15 +41,20 @@
         .two-columns ul {
             vertical-align: top;
         }
-        /*body {*/
-            /*background: -webkit-linear-gradient(antiquewhite, #ffd48f); /!* For Safari 5.1 to 6.0 *!/*/
-            /*background: -o-linear-gradient(antiquewhite, #ffd48f); /!* For Opera 11.1 to 12.0 *!/*/
-            /*background: -moz-linear-gradient(antiquewhite, #ffd48f); /!* For Firefox 3.6 to 15 *!/*/
-            /*background: linear-gradient(antiquewhite, #ffd48f); /!* Standard syntax *!/*/
-        /*}*/
+        #slideName{
+            position: fixed;
+            bottom: 55px;
+            left: 1em;
+            color: darkorange;
+            font-size: 30px;
+        }
+        section {
+            color: #ffc300;
+        }
     </style>
 </head>
 <body>
+<div id="slideName"></div>
 <div class="reveal">
     <!-- Any section element inside of this container is displayed as a slide -->
     <section class="slides">
@@ -86,10 +91,17 @@
     $(document).ready( function (){
         $(document).keydown(function (eventObj){
            if (eventObj.keyCode == 13) {
-               $("section.present iframe")[0].contentWindow.codeMirror.focus()
+               $("section.present:not(:has(section.present)) iframe")[0].contentWindow.codeMirror.focus()
            }
         });
     });
+    Reveal.addEventListener( 'slidechanged', function( event ) {
+        var title = $(event.currentSlide).attr("title");
+        if (title)
+            $("#slideName").html(event.indexh + ". " + title);
+        else
+            $("#slideName").html("");
+    } );
 </script>
 </body>
 </html>

@@ -35,6 +35,7 @@ dependencies {
 	compile "org.springframework:spring-context:4.1.6.RELEASE"
 	compile "org.springframework.boot:spring-boot-starter-web"
 	compile "org.springframework.boot:spring-boot-starter-thymeleaf"
+	compile "org.spockframework:spock-core:0.7-groovy-2.0"
 	testCompile 'junit:junit:4.11'
 }
 

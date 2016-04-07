@@ -41,7 +41,7 @@ class CodeController
 		try {
 			res = new GroovyShell().evaluate(script.script as String)
 		}
-		catch (any) {
+		catch (Throwable any) {
 			res = any.message
 			any.printStackTrace(new PrintWriter(writer))
 			hasError = true

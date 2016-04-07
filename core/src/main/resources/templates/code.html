@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="/3rdparty/codemirror/theme/vibrant-ink.css" />
     <link rel="stylesheet" href="/3rdparty/codemirror/addon/fold/foldgutter.css" />
     <link rel="stylesheet" href="/3rdparty/codemirror/addon/lint/lint.css" />
+    <link rel="stylesheet" href="/3rdparty/codemirror/addon/display/fullscreen.css" />
     <link rel="stylesheet" href="/3rdparty/codemirror/addon/hint/show-hint.css" />
     <link rel="stylesheet" href="/3rdparty/reveal-js/css/bootstrap.css" />
 
@@ -79,6 +80,9 @@
             },
             "Esc": function(cm) {
                 window.parent.focus()
+            },
+            "Ctrl-F": function(cm) {
+                cm.setOption("fullScreen", !cm.getOption("fullScreen"));
             }
         },
         lineComment: "//",
@@ -94,6 +98,9 @@
         keyMap: "sublime",
         transitionSpeed: 'fast'
     });
+
+    if ($(window.frameElement).hasClass("codemirror-fullscreen"))
+        codeMirror.setOption("fullScreen");
 
     function displayOutput(data) {
         var $output = $('#output');
