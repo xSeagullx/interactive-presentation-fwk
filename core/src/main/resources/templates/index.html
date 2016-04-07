@@ -45,11 +45,19 @@
             position: fixed;
             bottom: 55px;
             left: 1em;
-            color: darkorange;
             font-size: 30px;
         }
-        section {
+        body #slideName {
+            color: darkorange;
+        }
+        body section {
             color: #ffc300;
+        }
+        body.lightTheme #slideName {
+            color: #0073ff;
+        }
+        body.lightTheme section {
+            color: #003cff;
         }
     </style>
 </head>
@@ -87,11 +95,40 @@
             { src: '/3rdparty/reveal-js/plugin/notes/notes.js', async: true }
         ]
     });
+    var themes = {
+        darkTheme: "/3rdparty/reveal-js/css/theme/night.css",
+        lightTheme: "/3rdparty/reveal-js/css/theme/white.css",
+    };
+
+    var isLightTheme = false;
+    var switchCodeTheme = function() {
+        var currentTheme = isLightTheme ? "neat" : "vibrant-ink";
+        console.log("setting theme to: " + currentTheme);
+        $("iframe").each (function (_, it) {
+            var iframeDocument = it.contentDocument || it.contentWindow.document;
+            $(iframeDocument.body).toggleClass("lightTheme", isLightTheme);
+            if (it.contentWindow.codeMirror != undefined) {
+                it.contentWindow.codeMirror.setOption("theme", currentTheme);
+            }
+        });
+    };
+
+    var switchTheme = function() {
+        isLightTheme = !isLightTheme;
+        var currentTheme = isLightTheme ? "lightTheme" : "darkTheme";
+        document.getElementById('theme').setAttribute("href", themes[currentTheme]);
+        var $body = $("body");
+        $body.toggleClass("lightTheme", isLightTheme);
+        switchCodeTheme();
+    };
 
     $(document).ready( function (){
         $(document).keydown(function (eventObj){
            if (eventObj.keyCode == 13) {
                $("section.present:not(:has(section.present)) iframe")[0].contentWindow.codeMirror.focus()
+           }
+           if (eventObj.keyCode == 84) {
+               switchTheme();
            }
         });
     });

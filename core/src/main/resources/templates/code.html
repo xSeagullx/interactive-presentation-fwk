@@ -22,18 +22,29 @@
 
         body,
         #output,
-        .cm-s-vibrant-ink.CodeMirror {
+        .CodeMirror {
             background: rgb(17, 17, 17);
+        }
+        body.lightTheme,
+        .lightTheme #output,
+        .lightTheme .CodeMirror {
+            background: white;
         }
         #output {
             height: 100%;
             width: 100%;
             font-size: 24px;
-            color: yellow;
             padding-top: 1em;
+            color: yellow;
         }
         #output.error {
             color: red;
+        }
+        .lightTheme #output {
+            color: black;
+        }
+        .lightTheme #output.error {
+            color: darkred;
         }
     </style>
 
