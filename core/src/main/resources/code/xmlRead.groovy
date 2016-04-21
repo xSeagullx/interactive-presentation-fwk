@@ -24,10 +24,14 @@ def feed = $/<feed>
     </entry>
 </feed>/$
 
+
 def xml = new XmlParser().parseText(feed)
 println("Names")
-println(xml.entry.author.name.text())
+println(xml.entry.author.name*.text().join(","))
+println()
 println("Titles")
 println(xml."**".title*.text().join('\n'))
+println()
 println("tags")
 println(xml."**".@term.grep { it?.size() > 2 } )
+println()

@@ -41,11 +41,22 @@
         .two-columns ul {
             vertical-align: top;
         }
-        #slideName{
+        #slideName {
             position: fixed;
             bottom: 55px;
             left: 1em;
             font-size: 30px;
+        }
+        #timeLeft {
+            display: none;
+            position: fixed;
+            top: 25px;
+            left: 1em;
+            font-size: 10px;
+            color: green;
+        }
+        #timeLeft.overdue {
+            color: red;
         }
         body #slideName {
             color: darkorange;
@@ -63,6 +74,7 @@
 </head>
 <body>
 <div id="slideName"></div>
+<div id="timeLeft"></div>
 <div class="reveal">
     <!-- Any section element inside of this container is displayed as a slide -->
     <section class="slides">
@@ -122,17 +134,46 @@
         switchCodeTheme();
     };
 
+    var startTime = new Date().getTime();
+    var deadlineSec = 45 * 60;
+    var slideDeadline = deadlineSec;
+
+    function elapsedSecs() {
+        return (new Date().getTime() - startTime) / 1000;
+    }
+
+    function updateTickCount() {
+        var totalTime = parseFloat(deadlineSec - elapsedSecs()).toFixed(2);
+        var slideTime = parseFloat(slideDeadline - elapsedSecs()).toFixed(2);
+
+        var $timeLeft = $("#timeLeft");
+        if (slideTime > 0)
+            $timeLeft.toggleClass("overdue", true);
+        $timeLeft.html(totalTime + "(" + slideTime + ")");
+    }
+
+//    var intervalId = setInterval(updateTickCount, 100);
+//    clearInterval(intervalId);
+
     $(document).ready( function (){
-        $(document).keydown(function (eventObj){
-           if (eventObj.keyCode == 13) {
+        $(document).keydown(function (eventObj) {
+           var keySpace = 13;
+           var keyT = 84;
+           var keyS = 83;
+           if (eventObj.keyCode == keySpace) {
                $("section.present:not(:has(section.present)) iframe")[0].contentWindow.codeMirror.focus()
            }
-           if (eventObj.keyCode == 84) {
+           if (eventObj.keyCode == keyT) {
                switchTheme();
+           }
+           if (eventObj.keyCode == keyS) {
+               //startTimer
            }
         });
     });
+
     Reveal.addEventListener( 'slidechanged', function( event ) {
+        slideDeadline = parseFloat($(event.currentSlide).attr("deadlineSec"));
         var title = $(event.currentSlide).attr("title");
         if (title)
             $("#slideName").html(event.indexh + ". " + title);

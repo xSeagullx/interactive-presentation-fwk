@@ -5,8 +5,9 @@ fib = { n ->
 	n == 1 || n == 2 ? 1 : fib(n - 1) + fib(n - 2)
 }//.memoize()
 
-fib(5)
+def res = fib(5)
 
 // Print Stats
 println "Call statistics"
 println(stat.collect { "\tfib($it.key): $it.value" }.join("\n"))
+res

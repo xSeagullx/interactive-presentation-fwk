@@ -1,4 +1,5 @@
 def blowStack
-blowStack = { if (it < 10_000) blowStack(it + 1) else it }
+// BTW, can you see it?
+blowStack = { it >= 10_000 ? it : blowStack(it + 1) }
 
 blowStack(1)
