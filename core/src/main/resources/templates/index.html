@@ -180,6 +180,24 @@
         else
             $("#slideName").html("");
     } );
+
+    $( document ).ready(function () {
+        if (location.search.indexOf('print-pdf') != -1) {
+           $("section").attr("style", '');
+            var $iframe = $("section iframe");
+            $iframe.parent().attr("style", '');
+            $iframe.width("100%");
+            $iframe.height("600px");
+            $iframe.each(function(_, it) {
+               it.addEventListener("load", function() {
+                 it.contentWindow.codeMirror.setOption("fullScreen", true);
+                 var iframeDocument = it.contentDocument || it.contentWindow.document;
+                 $(iframeDocument).find(".output-row").hide();
+               });
+           } )
+        }
+    });
+
 </script>
 </body>
 </html>
