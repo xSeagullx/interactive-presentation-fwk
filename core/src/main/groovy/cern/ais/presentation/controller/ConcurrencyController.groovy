@@ -5,12 +5,12 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.RequestMapping
 
 @Controller
-@RequestMapping("main")
-class MainController {
+@RequestMapping("concurrentProgramming")
+class ConcurrencyController {
 	@RequestMapping("/index")
 	String code(Model model) {
-		model.addAttribute("title", 'HW')
-		model.addAttribute("slides", 'slides')
+		model.addAttribute("title", 'CP')
+		model.addAttribute("slides", 'concurrency')
 		"index"
 	}
 }

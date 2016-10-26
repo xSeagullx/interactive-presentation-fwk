@@ -12,18 +12,19 @@ buildscript {
 	}
 }
 
-apply plugin: 'idea'
 apply plugin: 'spring-boot'
+apply plugin: 'scala'
 apply plugin: 'groovy'
+//apply plugin: 'idea'
 
 sourceCompatibility = 1.8
 
-idea {
-	module {
-		inheritOutputDirs = false
-		outputDir = file("$buildDir/classes/main/")
-	}
-}
+//idea {
+//	module {
+//		inheritOutputDirs = false
+//		outputDir = file("$buildDir/classes/main/")
+//	}
+//}
 
 repositories {
 	mavenLocal()
@@ -36,6 +37,9 @@ dependencies {
 	compile "org.springframework.boot:spring-boot-starter-web"
 	compile "org.springframework.boot:spring-boot-starter-thymeleaf"
 	compile "org.spockframework:spock-core:0.7-groovy-2.0"
+	compile 'org.scala-lang:scala-library:2.11.7'
+	compile 'com.typesafe.scala-logging:scala-logging_2.11:3.1.0'
+	compile 'com.typesafe.akka:akka-actor_2.11:2.4.1'
 	testCompile 'junit:junit:4.11'
 }
 

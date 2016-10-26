@@ -17,7 +17,7 @@ class Student {
 		if (this.is(o)) return true
 		if (getClass() != o.getClass()) return false
 
-		Student student = (Student) o
+		code.Student student = (code.Student) o
 
 		gender == student.gender &&
 			name == student.name &&
@@ -35,4 +35,4 @@ class Student {
 		"Student(name='$name', lastName='$lastName', gender=$gender)"
 	}
 }
-new Student("Pavel", "Dionisev", Student.Gender.M)
+new code.Student("Pavel", "Dionisev", code.Student.Gender.M)

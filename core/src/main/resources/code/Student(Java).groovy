@@ -1,5 +1,3 @@
-import java.util.Objects;
-
 public class Student {
 	public enum Gender {
 		M, F
@@ -39,7 +37,7 @@ public class Student {
 		if (this.is(o)) return true; // Cheat place. Should be "this == o"
 		if (getClass() != o.getClass()) return false;
 
-		Student student = (Student)o;
+		code.Student student = (code.Student)o;
 
 		return gender == student.gender &&
 			Objects.equals(lastName, student.lastName) &&
@@ -60,4 +58,4 @@ public class Student {
 			')';
 	}
 }
-new Student("Pavel", "Dionisev", Student.Gender.M)
+new code.Student("Pavel", "Dionisev", code.Student.Gender.M)

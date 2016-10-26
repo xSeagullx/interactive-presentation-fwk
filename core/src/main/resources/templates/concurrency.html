@@ -1,0 +1,467 @@
+<!-- OUtline
+Message: Overview of (JVM) concurrency
+
+To cover:
+ 1. Concurrency vs parallelizm.
+ 1. Base.
+  1. Shared resources (memory) / Processing power
+  2. Key metrics and tasks. (latency/responsiveness, degree-of-concurrency/scalability, throughput(won't touch))
+ 2. Locks (deadlocks, livelocks). Game with handshakes (shake 3 hands, say 3 facts about u).
+ 3. Callbacks (Future/Promise Scala, vs Future in Java). async - await (Generally this is to define a dataflow, a path for a programm to be executed).
+ 4. fork/join (usually single core, recursive) and map/reduce (cloud). Standard hierarchical organisation with task disstribution and reporting.
+ 5. Actors / Channels (python). One is a mailbox, second - phone call (have ack phase, and both sender and receiver shall be ready to use channel)
+ 
+ 6. Threads, Pools. Implicit execution go-routines.
+ 
+ All Primitives at hand: Threads / monitors / Atomics / volatile / Concurrent collections / Executors / Futures / Actors)
+ 
+ Callback example (Mention keeping execution line intact)
+    (I'll give you my phone number, you'll call me when it's done from Joao (wrong, loose execution context)).
+    (I'll give you instructions, what shall you do) // Future / Callback
+    (I'll gave you my site address, where I'll publish results, and you'll be able to check it as often as u want)
+
+ Code examples (worker analogy)
+    new Thread() - hire worker
+    Executors.newFixedPool(8) - hire a manager with 8 worker
+    Futures / Promises - manager is there, and he accepts written instructions, and not so dumb.
+    Akka Actors - hire an organisation with mailboxes =)
+    
+-->
+<section deadlineSec="10">
+    <h2>Easy Concurrency</h2>
+    <h4 class="fragment" data-fragment-index="1"><span>by: <em>Pavel Dionisev</em></span></h4>
+    <h4 class="fragment" data-fragment-index="1"><small>Available at: <a href="https://github.com/xSeagullx/interactive-presentation-fwk">GitHub</a></small></h4>
+</section>
+<section>
+    <section title="For whom is this talk?" deadlineSec="20">
+        <h2>For whom? Audience.</h2>
+        <div class="fragment">For everyone who is curious</div>
+        <div class="fragment">For experienced programmers w/o concurrent background</div>
+        <!-- Concurrency is traditionally considered to be one of hardest topics in industrial programming. -->
+        <!-- Making it work requires skill, making it right is a virtue. -->
+        <!-- Many programmers lack fundamental understanding of how it works, and why it doesn't, and in this talk -->
+        <!-- I'm going to explain some basic concepts, and give some real-life examples, to make them easy to grasp. -->
+        <!-- I'll also show how concurrent programming evolves over time, and what new concepts you can use to write your concurrent application.-->
+    </section>
+    <section title="Who am I?">
+        <div class="fragment grow">Software Developer at CERN</div>
+        <div class="fragment grow">6+ years of work experience (Java/Groovy/Scala)</div>
+        <div class="fragment grow">Student and Speaker at previous AIS GRID Schools</div>
+    </section>
+</section>
+<section>
+    <section title="Parallel vs Concurrent">
+        <h3 class="fragment grow">Speed / Scalability</h3>
+        <div class="fragment">Rob Pike - ‘Concurrency Is Not Parallelism’</div>
+        <div class="fragment">Parallelism - is to do something simultaneously.</div>
+        <div class="fragment">Concurrency Is a Design of Communication.</div>
+        <!-- To begin with I'd like to clarify what is concurrency about. First of all, there is a common confusion between concurrency and parallelism.-->
+        <!-- Concurrency and parallelism are related, but not the same. -->
+        <!-- Parallelism - is to do something simultaneously, while concurrency not necessary involves parallel execution. -->
+        <!-- Parallelism is mostly targeting performance, while concurrency is all about communicating between independent processes. -->
+        <!-- There is a good presentation about this difference from one of the authors of Go language. In a nutshell (see slide)-->
+        <!-- ??? I was unable to find a proper russian term for them, which makes it even harder to grasp. -->
+    </section>
+    <section title="Number example">
+        <div>Concurrency is about 2 things.</div>
+        <div><ol>
+            <li class="fragment">How to <strong>distribute</strong> tasks.</li>
+            <li class="fragment">How to <strong>share</strong> resources.</li>
+        </ol>
+        </div>
+        <h1>
+            <span class="fragment">3</span>
+            <span class="fragment">, 2</span>
+            <span class="fragment">, 1</span>
+            <span class="fragment">, Now!</span>
+        </h1>
+
+        <!-- To illustrate it lets play a game. I want you to think of a number, 2 digit. Any number, for example - 42.-->
+        <!-- I give you time for it. Now, I count to 3 and you say tat number to me. Ok. Go. -->
+        <!-- What do we get here? -->
+        <!-- You did thinking in parallel, all together, at the same time. Perfect example of parallelism. -->
+        <!--TODO Make less accusational -->
+        <!-- Then you need to access me. But as I can't process only so much data at the same time you need to manage access to me.
+        At the same time I'm the shared resource. Accessing me at the same time is not possible. To be able to communicate your number to me, you have to manage this access.
+        This is concurrency.-->
+    </section>
+    <section title="Resume">
+        <h3>So - concurrency is a design of communication.</h3>
+        <h4>It includes task distribution and shared resource access.</h4>
+    </section>
+</section>
+<section title="Goals">
+    <section>
+        <h2>What for? Goals.</h2>
+    </section>
+    <section title="Performance">
+        <div class="fragment">Speed => Parallelism</div>
+        <div class="fragment">Parallelism => Concurrency</div>
+        <!--There are several problems that can be solved with concurrency and parallelism.-->
+        <!--One obvious one is to increase performance. Some tasks can be done faster, if it's done by multiple workers.-->
+        <!--Almost all devices are capable of doing computations in parallel, and number of cores in processors are increasing.-->
+    </section>
+    <section title="Responsiveness">
+        <h3>Multitasking</h3>
+        <!--Let's think of a video game. It has multiple subsystems working together.-->
+        <!--Image of: Inner logic, Graphics, Sound, User input, etc.  -->
+        <!--But concurrency is useful even when we have a processing power to execute only a single goal.-->
+        <!--Or if we are doing single task. If I'm working with some app, and I'm running a long-lasting task, I want to see a progress bar.-->
+    </section>
+    <!-- When we have a goal to achieve, we need to get something to measure our progress. -->
+    <section title="Metrics">
+        <div class="fragment grow">Throughput - amount of operations we can perform per given time frame.</div>
+        <!-- This ones is related to raw performance. -->
+        <div class="fragment grow">Latency (how fast we will get reply).</div>
+        <!-- Second one gives us a  -->
+        <div class="fragment"><h2>Responsiveness</h2></div>
+        <!-- Responsiveness - quality of software to be responsive to user. Includes low latency for critical tasks, task prioritisation and tangible feedback for long-running operations (performed in background).-->
+    </section>
+    <!-- Now we know, what are the goals of concurrency and how to measure our progress in achieving them. -->
+</section>
+<section><!-- Task distribution -->
+    <section><h3>Task distribution</h3></section>
+    <section title="Terms">
+        <div class="">What is the Task?</div>
+        <!--We will call any set of instructions.-->
+        <!--Every program is expressed as the set of instructions.-->
+        <div class="fragment">Who executes it?</div>
+        <!--As this set of instructions have to be executed. We will call anything capable of doing so a worker or an agent. Or, in JVM world we will call it Thread. -->
+    </section>
+    <section title="Processes">
+        <ul>
+            <li>Cores</li>
+            <li>Processes</li>
+            <li>Threads</li>
+        </ul>
+        <!--Every program has at least one thread available for it, that executes it. But we will be talking about systems capable of executing multiple tasks at the same time.-->
+        <!--You were executing a task given by me.-->
+        <!--That task is an example of something that can easily be paralleled, as it required no interaction. -->
+    </section>
+    <section title="Threads">
+        <!-- TODO height 450-500 px or fullscreen -->
+        <iframe class="stretch codemirror-fullscreen" src="/code/threads.groovy"></iframe>
+    </section>
+    <!--So, now we know the basics about shared resources. But what about clients. Who they are?-->
+    <!--If we bring a real-word analogy, client will be someone or something that can perform some tasks (instructions).-->
+    <!--Sometimes I will call them Workers, because they do work.-->
+    <!--In Java we will mostly work with Threads, that are independent processes capable of executing code. When they don't execute code, they sleep.-->
+    <!-- Using threads is like delegating some task via to a freelancer. -->
+    <!-- FIXME see Test.java -->
+</section>
+<section>
+    <section><h3>Shared Resource Access</h3></section>
+    <section title="Lock">
+        <!-- Let's talk about sharing resources, and accessing them from different workers. Sometimes it's fine to access it simultaneously, sometimes - not. -->
+        <!-- Many real things require to limit access to them. -->
+        <!-- TODO fixme nice image-->
+        <!-- One of the simplest mean to manage access to the shared resource is lock. -->
+        <!-- Lock - is something that is unique, can be owned by a single client. That's how we acquire a lock. -->
+        <!-- *Shake someone hand* -->
+        <!-- Now, we communicate, and other clients see, that lock is acquired, so if they need to access me, they have to wait until it get's released. -->
+        <!--Shake my (right) hand. This is the lock. As soon as you acquire it, you can talk. You finish - you release my hand, someone else can shake it.-->
+        <!--Lock has 3 basic operations. Acquire, Release and Check.-->
+        <div class="fragment">Acquire</div>
+        <div class="fragment">Release</div>
+        <div class="fragment">Check</div>
+    </section>
+    <section title="Lock in Java">
+        <div>In Java you can express lock behaviour with <strong>synchronized {}</strong> block</div>
+        <pre><code class="java" data-trim="">
+synchronized(Pavel) {
+    // Here can be only one. Thread. 
+    talkWithPavel()
+}
+// Lock is released here
+        </code></pre>
+        <!--So any process, that reaches synchronized block, first check, if Resource is buzy. If it is, we wait.
+         If not - we acquire the lock and enter synchronized block -->
+        <!--Then, and other process, that reaches same point, will wait untill the one who has the lock will leave synchronized block.-->
+        <!--When we leave it, lock is automatically released, and second process is free to enter that block.-->
+    </section>
+</section>
+<section title="Conclusions">
+    <h2>Are we done?</h2>
+    <h2 class="fragment">Probably…</h2>
+    <!-- Now we have Threads and locks.
+    We can distribute tasks, and access shared resources. Concurrency is done. -->
+    <!--just like the locks treads are main workhorses of Java concurrency-->
+</section>
+<section>
+    <section title="Back to The Threads">
+        <!-- TODO height 450-500 px or fullscreen -->
+        <iframe class="stretch codemirror-fullscreen" src="/code/threads.groovy"></iframe>
+    </section>
+    <section title="Thread Pools">
+        <div class="fragment">Freelancer <span class="fragment">— Thread</span></div>
+        <div class="fragment">Outsource Company<span class="fragment">— Thread Pool</span></div>
+        <!--It all goes well and neat when you deal with a good freelancer. Job will be done, you'll be happy.-->
+        <!--But in real life you may face a guy who'll be slacking or just disappear.-->
+        <!--Imagine you have to manage multiple freelancers, distribute work between them and control execution.-->
+        <!--Sort of tricky. But you can give some work to an outsource company. You give them a bunch of tasks, they report results.-->
+        <!--All work distribution is done inside that company, and you don't care about it.-->
+        <!--This is ThreadPool.-->
+    </section>
+    <section title="Thread Pool Example">
+        <!--FXIME See Test. Java-->
+        <!-- TODO height 450-500 px or fullscreen -->
+        <iframe class="stretch codemirror-fullscreen" src="/code/threadPools.groovy"></iframe>
+        <!--Give a task, or list of tasks, wait for it to be finished.-->
+    </section>
+    <section title="Java Future">
+        <div><img height="400px" src="/assets/tracking.jpeg" /></div>
+        <!--what you get from thread pool is a Future. I'll call it Java Future, as we will look at another one later.-->
+        <!--Future is like a tracking number you get from post when they deliver something to you.-->
+        <!--You manually check latest status of your parcel, no notification is sent to you. At the end you will either see an successful result, or a failure.-->
+        <!--You can check it as often as you want, without disturbing an underlying process.-->
+        <div class="fragment">No notifications!</div>
+    </section>
+</section>
+
+<section>
+    <section title="Callbacks">
+        <!-- Sticker with instruction -->
+        <!--When we plan a distributed task, that yield some results, instead of asking worker if task is ready, we might as well schedule something to be executed.-->
+        <!--Callback is a piece of code, to be executed by caller thread.-->
+        <!--Callbacks are natural for languages, that support method references or anonymous functions, but in Java you might also see a lot callback-driven code.-->
+        <!--Especially if we talk about web, or desktop - UI applications.-->
+        <div>Callback is a piece of code, to be executed by <strong>someone else.</strong></div>
+        <div class="fragment"><img src="/assets/sticker.png" /></div>
+    </section>
+    <!-- Callbacks are awesome, but … -->
+    <section title="Callback hell" data-markdown="">
+        > “I heard you like callbacks, so I put a callback in your callback!”
+    </section>
+    <section title="Choice?">
+        <div>
+            <img src="/assets/pills.jpg"/>
+        </div>
+    </section>
+    <section title="Pipeline">
+        <img src="/assets/Henry_ford_1919.jpg"/>
+        <!--But what If we take a step further and plan everything in advance. The goal is to plan a whole pipeline of execution,-->
+        <!--including something-goes wrong path. It require a small mindshift, but results are worth doing so. As you can probably see, nothing here IMPLIES parallelism.-->
+        <!--But at the same time it scales well with multiple cores, allowing us to distribute the load on multiple cores.-->
+        <!--BTW, this idea is implemented in many languages, not only Java, including, for example, js.-->
+    </section>
+
+    <section title="Java 8 CompletableFuture or Scala Future (code)">
+        <div>Tracking number + Callback (on success or failure)</div>
+        <div class="fragment">Can Combine</div>
+        <pre><code class="scala">
+val task1 = Future {
+    // Do something slow   
+}
+task1.onComplete {
+    case Success(result) => doSomething(result)
+    case Failure(exception) => report(exception)
+}
+        </code></pre>
+    </section>
+    <section title="Combination">
+        <pre><code class="scala">
+val coffeePowder = grindBeans() // Returns Future. Not finished
+val futureCoffee = for {
+    water &lt;- getWater()
+    hotWater &lt;- boil(water) // Will wait for water
+    coffee &lt;- makeCoffee(coffeePowder, hotWater)
+} yield (coffee) // Will fail, if any step failed.
+        </code></pre>
+    </section>
+
+    <section title="Promises">
+        <div>Receiving end of a Future</div>
+        <div class="fragment">Can create a Future out of it.</div>
+        <div class="fragment"><strong>You</strong> complete it.</div>
+        <!--So, idea of futures, is to plan things on client-side. You ask for resource, and plan actions upon completion. You say "and then, or else".-->
+        <!--There is another neat concept that can be used by serving side. It's a Promise. You don't ask: give me a future, you gave a promise, and other worker will (eventually) either fill it, or report failure.-->
+        <!--Really, Futures and Promises are always tied together, but you'll use Futures more often (if you are not developing some async API).-->
+        <div class="fragment"><a href="http://stackoverflow.com/a/13388618/1601606">http://stackoverflow.com/a/13388618/1601606</a></div>
+    </section>
+    <section>
+        <!--Everything in this section uses Thread pool under the hood to actually perform the job, which in turn uses simple Threads. But now we are able to describe complex pipeline and JVM will care about it's execution for us.-->
+        <h3>Note:</h3>
+        <div><strong>Future {}</strong> uses ExecutionContext == ThreadPool</div>
+    </section>
+</section>
+
+<section title="Fork / Join, Map / Reduce">
+    <ul>
+        <li><h3>Recursive solutions</h3></li>
+        <li><h3>Distributed computations</h3></li>
+    </ul>
+    <!--Now, what about a bit more complex example. Imagine I need to do a lot of repetitive operation, for example process a huge collection with million elements, and do some operation with every one.-->
+    <!--I'd like to be fast and utilise as many cores as possible and utilise them to the fullest.-->
+    <!-- Card examle-->
+    <!--Divide and conquer algorithm framework. Get the task (count students in audience).-->
+    <!--I have a pile of paper, and I have to draw something on it. It may be a smile, my signature, etc. But I'm to lazy to do it, so I divide this pile in 2, and give it to you, asking you to do this job.-->
+    <!--I distribute a task, you do the job. Or, distribute it in turns, until stash is small enough to do a job.-->
+    <!--Then you return results to distributor, whou in turn return it back thtough hierarchy. F/J also includes something called (work-stealing), that makes "distributors" do real job too, instead of just waiting.-->
+    <!--Please forgive me for oversimplification, we are talking about essentials.-->
+</section>
+
+<section title="Akka details">
+    <section title="Mailbox / Actors">
+        <img src="/assets/mail.jpg" />
+        <!--With futures and Thread pools we were optimizing total execution time by processing something by multiple workers.-->
+
+        <!--Next tool is for both high-level orchestration of concurrent application, as well as optimization of single-task processing.-->
+
+        <!--Remember first example, when you were to ask me a question. How much time I spent while going to you and shaking hand. How much time were you sitting still with your question in mind, not being able to address me?-->
+        <!--That was due to me, being a blocking bottle-neck of our operation. Imagine, that you don't care when you'll receive my answer. In that case, you can always write it down on the list of paper, and put it in my mailbox.-->
+
+        <!--As long as dropping email is async and fast operation - it can be handled quickly. Then I'll be able to non-stop pick a question, read it, answer it (process it), and put it into your mailbox.-->
+        <!--So, you all will be perfectly parallel and decoupled from my execution speed. And I'll work on top of my performance, picking questions one after another, and answering them non-stop.-->
+        <!--I'll have less context-switch and more processing power dedicated to actually do the job at the price of you having to serialize your question on a paper.-->
+        <!--In Java I'll cover akka library (which actually comes from Scala world, but have a pure Java API).-->
+        <!--// Akka example. (Write your numbers on a sheet of paper. Put it in the box. I'll sum it up in my pace.) My resource is almost 100% dedicated to task w/o context switch.-->
+    </section>
+    <section title="Location transparency">
+        <h3>Address</h3>
+        <div class="fragment"><strong>Кому: </strong>Дедушке Морозу</div>
+        <div class="fragment">akka://SomeActorSystem/user/<strong>SomeActor/SomeOtherActor</strong></div>
+        <div class="fragment">Wrapped in ActorRef and abstracted out</div>
+        <!--I've mentioned this term, time to explain it.-->
+        <!--So, in Akka everything revolves around a concept of actor, who is executing task from it's mailbox. As with any mailbox we have a concept of address.-->
+        <!--All actors have a path, or URL-like name. Here is an example of this path. This path can be pretty complex, so it's abstracted out by an instance of ActorRef class.-->
+        <!--Every message that has a sender, has a return-address, so actors can reply on messages they got. Interesting point here is, that ActorRef for any actor behaves exactly same way: both if actor is managed by same thread, same jvm and even if it's accessible through network.-->
+        <!--This is a concept of Location Transparency, and it's a very reason, why you shall care about your messages being serializable.-->
+        <!--Serialization will be also handled by Akka underneath, usually, only when message is leaving JVM it has been created in.-->
+    </section>
+    <section title="Serialization">
+        <div>Serialization - is a process of converting internal representation to a transferable format.</div>
+        <!--Now we talk about what is necessary to do this job. Precisely - serialization. You have to be able put your question in words, provide enough context, that I'll be answer to handle it.-->
+        <!--In software design in means, that this task can be son-->
+        <!--// If there is something we both know, you my refer it with reference. Like today.-->
+        <!--Akka implies locational transparency. Another computer can process your message, and you'll never know. In that case your data shall be:-->
+        <!--1. Passed by value. Not today, but 23-th of October.-->
+        <!--2. Contain no data I don't know. (i.e you can't write "????") // TODO-->
+        <!--4. Immutable. (Nobody, including you, shall be able to modify message once it reached my mailbox). Imagine you changed an appointment time in Skype after I already planned everything (i.e. Processed your message). I won't take new changes into account.-->
+        <!--3. Include return address.-->
+        <!--Good thing, you don't have to care about versioning. -->
+    </section>
+    <section>
+        <ul>
+            <li>Immutable</li>
+            <li class="fragment">Passed by value</li>
+            <li class="fragment">Self-contained (no reference)</li>
+            <li class="fragment">Can have a return address</li>
+        </ul>
+    </section>
+    <section title="Supervision chain">
+        <img src="/assets/akka-hierarchy.png" />
+        <div class="fragment">akka://GridSchool/user/<strong style="color: red">Speakers/</strong>Pavel</div>
+        <div class="fragment">akka://GridSchool/user/Speakers/<strong style="color: red">Pavel</strong></div>
+        <!--If we look at the path, we will notice another interesting fact. Actors are organized in hierarchial structure. For every actor (except root one, created by system) we have a "parent" actor.-->
+        <!--The ideology of Akka is that actors will fail. No exception. So, "Let if fail", expect that failure, making it a part of a normal work process. Be ready to recover it, to handle it gracefully.-->
+        <!--Akka gives a powerful mechanism form that.-->
+        <!--First - it lifts the necessity of creating actors manually. In thruth, you are even not allowed to instantiate an Actor manually.-->
+        <!--Second, actor is created only from other actor, naturally forcing every actor to have a parent.-->
+        <!--Third, as every parent is responsible for he's children, actor's parent is responsible for their recovery. Depending on a Supervision Strategy actors can be stopped and restarted by their parent.-->
+    </section>
+</section>
+<section> <!-- Akka Benefits and Limitations -->
+    <section title="Akka Benefits…">
+        <ul>
+            <li class="fragment"><i class="glyphicon glyphicon-plus-sign text-success"></i> While processing a message your code can be written in single-thread manner.</li>
+            <li class="fragment"><i class="glyphicon glyphicon-plus-sign text-success"></i> System becomes low coupled and easy to test.</li>
+            <li class="fragment"><i class="glyphicon glyphicon-plus-sign text-success"></i> Powerful FSM mechanism inside</li>
+        </ul>
+    </section>
+    <section title="… and Limitations">
+        <ul>
+        <li class="fragment"><i class="glyphicon glyphicon-minus-sign text-danger"></i> Messages must be immutable.</li>
+        <li class="fragment"><i class="glyphicon glyphicon-minus-sign text-danger"></i> It's harder to process</li>
+        <li class="fragment"><i class="glyphicon glyphicon-minus-sign text-danger"></i> You loose a fraction of statical code analysis, as actors can send and receive any message.</li>
+        <li class="fragment"><i class="glyphicon glyphicon-minus-sign text-danger"></i> Harder to chain and compose than Futures</li>
+        <li class="fragment"><i class="glyphicon glyphicon-minus-sign text-danger"></i> Sometimes harder to debug</li>
+        </ul>
+    </section>
+    <section title="When to use">
+        <h3>When to use?</h3>
+        <ul>
+            <li class="fragment">If you have state</li>
+            <li class="fragment">If you want transparent scalability</li>
+        </ul>
+    </section>
+    <section>
+        <h3>Note:</h3>
+        <div><strong>Akka</strong> uses ThreadPool behind, to process messages in actors and fast concurrent message queue (that have synchronisation and locking inside).</div>
+    </section>
+</section>
+<section><h1>Thank you!</h1></section>
+
+<!--Questions-->
+
+<!--1. What is true about parallelism and concurrency? (select all)-->
+    <!--a. Concurrency require parallelism-->
+    <!--b. Parallelism requires concurrency-->
+    <!--c. Neither is necessary, we are happy with single-process applications-->
+
+<!--2. What are key metrics to measure application responsiveness. (select all)-->
+    <!--a. Throughput (operations/sec)-->
+    <!--b. CPU frequency (operations/sec)-->
+    <!--c. Latency (sec/operation)-->
+    <!--d. Amount of work (operations)-->
+
+<!--3. These concepts mainly manage task distribution. (select all)-->
+    <!--a. Fork/Join and Map/Reduce-->
+    <!--b. Threads and Thread Pools-->
+    <!--c. Concurrent collections-->
+    <!--d. Locks-->
+    <!--e. Actors-->
+
+<!-- Draft / unused -->
+<!--<section title="Semaphores">-->
+    <!--There are variations of locks, that allow multiple clients to access same resource.-->
+    <!--Number of locks (I have 2 hands, to handle concurrent access).-->
+<!--</section>-->
+
+
+<!--<section title="Atomics">-->
+<!--</section>-->
+<!--<section title="Actors are about execution">-->
+    <!--Throughput?-->
+<!--</section>-->
+<!--<section title="">-->
+    <!--Threads, Vect ops and Executors are about parallelization. (Low overhead, use all resources).-->
+<!--</section>-->
+<!--<section title="">-->
+ <!--Locks, atomics, transactonal memory is about shared state. No race, consistent state. -->
+<!--</section>-->
+<!--<section title="Map-reduce">-->
+ <!--Delegate task. Transparently (routers in akka). -->
+<!--</section>-->
+<!--<section title="Green threads / Go routines">-->
+  <!---->
+<!--</section>-->
+<!--<section title="Erlang">-->
+<!--</section>-->
+<!--<section title="Why functional">-->
+    <!--1. Referential transparency.-->
+    <!--2. State isolation.-->
+    <!--2. Immutability.-->
+<!--</section>-->
+<!--<section title="Coroutines">-->
+  <!--Interrupt in the middle of function, and come back to it later.-->
+<!--</section>-->
+<!--<section title="Issues with akka">-->
+  <!--1. Exception handling. We no longer have meaningfull stacktrace.-->
+  <!--2. Serialization. No Versioning problem, but cyclic references and performance.-->
+  <!--3. Reliability. (and why not on transport layer).-->
+<!--</section>-->
+<!--<section title="Issues with locks">-->
+  <!--1. Hard to track.-->
+  <!--2. Deadlocks / livelocks.-->
+<!--</section>-->
+<!--<section title="Optimistic / pessimistic locking">-->
+<!--</section>-->
+
+<!--<section> Fork / Join / parallel collections</section>-->
+<!--<section>-->
+    <!--"Let it crash". Erlang (TODO). Scala (supervision).-->
+<!--</section>-->
+<!--<section>-->
+    <!--&lt;!&ndash;Goroutines (channels). Do we need them here?&ndash;&gt;-->
+<!--</section>-->
+
