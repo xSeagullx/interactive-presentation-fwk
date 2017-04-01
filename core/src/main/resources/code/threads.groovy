@@ -3,7 +3,7 @@
 	String prepareQuestion() { "$name's question" }
 }
 
-def students = [new Student("Саша"), new Student("Даша"), new Student("Кеша")]
+def students = [new Student("Anna"), new Student("John"), new Student("Henry")]
 def questions = []
 students.each { student ->
 	Thread.start { questions.add(student.prepareQuestion()) }

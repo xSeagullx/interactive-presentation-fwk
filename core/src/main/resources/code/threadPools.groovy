@@ -6,7 +6,7 @@ import java.util.concurrent.Executors
 	String prepareQuestion() { "$name's question" }
 }
 
-def students = [new Student("Саша"), new Student("Даша"), new Student("Кеша")]
+def students = [new Student("Anna"), new Student("John"), new Student("Henry")]
 List<Callable<String>> tasks = students.collect { student ->
 	new Callable<String>() {
 		@Override String call() {

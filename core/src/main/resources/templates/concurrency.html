@@ -69,12 +69,6 @@ To cover:
             <li class="fragment">How to <strong>share</strong> resources.</li>
         </ol>
         </div>
-        <h1>
-            <span class="fragment">3</span>
-            <span class="fragment">, 2</span>
-            <span class="fragment">, 1</span>
-            <span class="fragment">, Now!</span>
-        </h1>
 
         <!-- To illustrate it lets play a game. I want you to think of a number, 2 digit. Any number, for example - 42.-->
         <!-- I give you time for it. Now, I count to 3 and you say tat number to me. Ok. Go. -->
@@ -169,7 +163,7 @@ To cover:
         <div>In Java you can express lock behaviour with <strong>synchronized {}</strong> block</div>
         <pre><code class="java" data-trim="">
 synchronized(Pavel) {
-    // Here can be only one. Thread. 
+    // Only one Thread can be here at any time.
     talkWithPavel()
 }
 // Lock is released here
@@ -318,7 +312,7 @@ val futureCoffee = for {
     </section>
     <section title="Location transparency">
         <h3>Address</h3>
-        <div class="fragment"><strong>Кому: </strong>Дедушке Морозу</div>
+        <div class="fragment"><strong>To: </strong>Santa</div>
         <div class="fragment">akka://SomeActorSystem/user/<strong>SomeActor/SomeOtherActor</strong></div>
         <div class="fragment">Wrapped in ActorRef and abstracted out</div>
         <!--I've mentioned this term, time to explain it.-->
@@ -464,4 +458,3 @@ val futureCoffee = for {
 <!--<section>-->
     <!--&lt;!&ndash;Goroutines (channels). Do we need them here?&ndash;&gt;-->
 <!--</section>-->
-
