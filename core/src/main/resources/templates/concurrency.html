@@ -43,11 +43,6 @@ To cover:
         <!-- I'm going to explain some basic concepts, and give some real-life examples, to make them easy to grasp. -->
         <!-- I'll also show how concurrent programming evolves over time, and what new concepts you can use to write your concurrent application.-->
     </section>
-    <section title="Who am I?">
-        <div class="fragment grow">Software Developer at CERN</div>
-        <div class="fragment grow">6+ years of work experience (Java/Groovy/Scala)</div>
-        <div class="fragment grow">Student and Speaker at previous AIS GRID Schools</div>
-    </section>
 </section>
 <section>
     <section title="Parallel vs Concurrent">
@@ -60,7 +55,6 @@ To cover:
         <!-- Parallelism - is to do something simultaneously, while concurrency not necessary involves parallel execution. -->
         <!-- Parallelism is mostly targeting performance, while concurrency is all about communicating between independent processes. -->
         <!-- There is a good presentation about this difference from one of the authors of Go language. In a nutshell (see slide)-->
-        <!-- ??? I was unable to find a proper russian term for them, which makes it even harder to grasp. -->
     </section>
     <section title="Number example">
         <div>Concurrency is about 2 things.</div>
@@ -101,15 +95,15 @@ To cover:
         <!--Image of: Inner logic, Graphics, Sound, User input, etc.  -->
         <!--But concurrency is useful even when we have a processing power to execute only a single goal.-->
         <!--Or if we are doing single task. If I'm working with some app, and I'm running a long-lasting task, I want to see a progress bar.-->
+
+        <!-- Responsiveness - quality of software to be responsive to user. Includes low latency for critical tasks, task prioritisation and tangible feedback for long-running operations (performed in background).-->
     </section>
     <!-- When we have a goal to achieve, we need to get something to measure our progress. -->
     <section title="Metrics">
         <div class="fragment grow">Throughput - amount of operations we can perform per given time frame.</div>
         <!-- This ones is related to raw performance. -->
         <div class="fragment grow">Latency (how fast we will get reply).</div>
-        <!-- Second one gives us a  -->
-        <div class="fragment"><h2>Responsiveness</h2></div>
-        <!-- Responsiveness - quality of software to be responsive to user. Includes low latency for critical tasks, task prioritisation and tangible feedback for long-running operations (performed in background).-->
+        <!-- Second one gives us a measurement in responsiveness -->
     </section>
     <!-- Now we know, what are the goals of concurrency and how to measure our progress in achieving them. -->
 </section>
@@ -160,7 +154,7 @@ To cover:
         <div class="fragment">Check</div>
     </section>
     <section title="Lock in Java">
-        <div>In Java you can express lock behaviour with <strong>synchronized {}</strong> block</div>
+        <div>In Java you can express locking behaviour with the <strong>synchronized {}</strong> block</div>
         <pre><code class="java" data-trim="">
 synchronized(Pavel) {
     // Only one Thread can be here at any time.
@@ -170,7 +164,7 @@ synchronized(Pavel) {
         </code></pre>
         <!--So any process, that reaches synchronized block, first check, if Resource is buzy. If it is, we wait.
          If not - we acquire the lock and enter synchronized block -->
-        <!--Then, and other process, that reaches same point, will wait untill the one who has the lock will leave synchronized block.-->
+        <!--Then, and other process, that reaches same point, will wait until the one who has the lock will leave synchronized block.-->
         <!--When we leave it, lock is automatically released, and second process is free to enter that block.-->
     </section>
 </section>
@@ -187,8 +181,8 @@ synchronized(Pavel) {
         <iframe class="stretch codemirror-fullscreen" src="/code/threads.groovy"></iframe>
     </section>
     <section title="Thread Pools">
-        <div class="fragment">Freelancer <span class="fragment">— Thread</span></div>
-        <div class="fragment">Outsource Company<span class="fragment">— Thread Pool</span></div>
+        <div class="fragment"> Thread <span class="fragment">— Freelancer </span></div>
+        <div class="fragment">Thread Pool <span class="fragment">— Outsource Company</span></div>
         <!--It all goes well and neat when you deal with a good freelancer. Job will be done, you'll be happy.-->
         <!--But in real life you may face a guy who'll be slacking or just disappear.-->
         <!--Imagine you have to manage multiple freelancers, distribute work between them and control execution.-->
@@ -210,6 +204,11 @@ synchronized(Pavel) {
         <!--You can check it as often as you want, without disturbing an underlying process.-->
         <div class="fragment">No notifications!</div>
     </section>
+    <!-- As an example of futures I'll give you this deck, and ask you to write numbers on 4 random cards. -->
+    <!-- Ask him, if he's ready multiple times:-->
+    <!-- are you ready? -->
+    <!-- are you ready yet? -->
+  <!--Now you feel yourself as a java Future.-->
 </section>
 
 <section>
@@ -221,6 +220,7 @@ synchronized(Pavel) {
         <!--Especially if we talk about web, or desktop - UI applications.-->
         <div>Callback is a piece of code, to be executed by <strong>someone else.</strong></div>
         <div class="fragment"><img src="/assets/sticker.png" /></div>
+      <!--So, instead of annoying my friend (X) I could have just gave him a sticker with instruction, and not be a complete moron. -->
     </section>
     <!-- Callbacks are awesome, but … -->
     <section title="Callback hell" data-markdown="">
@@ -271,6 +271,7 @@ val futureCoffee = for {
         <!--There is another neat concept that can be used by serving side. It's a Promise. You don't ask: give me a future, you gave a promise, and other worker will (eventually) either fill it, or report failure.-->
         <!--Really, Futures and Promises are always tied together, but you'll use Futures more often (if you are not developing some async API).-->
         <div class="fragment"><a href="http://stackoverflow.com/a/13388618/1601606">http://stackoverflow.com/a/13388618/1601606</a></div>
+      <!-- It's like "Hello, this is my card's box. Please put cards in it, once you're done." -->
     </section>
     <section>
         <!--Everything in this section uses Thread pool under the hood to actually perform the job, which in turn uses simple Threads. But now we are able to describe complex pipeline and JVM will care about it's execution for us.-->
@@ -279,19 +280,47 @@ val futureCoffee = for {
     </section>
 </section>
 
+<section>
+  <h2>Back to shared object access</h2>
+</section>
+<!-- Talk about deadlocks, (with example and volunteer) share nothing and -->
+<!-- Deadlock example. I want you to think of 2 numbers, and I'll sum it. -->
+<!-- (X) will help me with that. -->
+<!-- I acquire first lock. -->
+<!-- But can't acquire second one. And I wait. -->
+<!-- X does the same. He took first lock, but now, he need to acquire a lock on Y. -->
+
+<section title = "Deadlock">
+  <iframe class="stretch" src="/code/deadlock.groovy"></iframe>
+</section>
+
+<!-- This is only one of problems. -->
+<!-- Let's talk about something even more sophisticated. -->
+
+<section title = "Sad story 2">
+  <iframe class="stretch" src="/code/volatile.groovy"></iframe>
+</section>
+
+<!--  -->
+<section title="Solution">
+  <h1>Share nothing!</h1>
+</section>
+
 <section title="Fork / Join, Map / Reduce">
-    <ul>
-        <li><h3>Recursive solutions</h3></li>
-        <li><h3>Distributed computations</h3></li>
-    </ul>
-    <!--Now, what about a bit more complex example. Imagine I need to do a lot of repetitive operation, for example process a huge collection with million elements, and do some operation with every one.-->
-    <!--I'd like to be fast and utilise as many cores as possible and utilise them to the fullest.-->
-    <!-- Card examle-->
-    <!--Divide and conquer algorithm framework. Get the task (count students in audience).-->
-    <!--I have a pile of paper, and I have to draw something on it. It may be a smile, my signature, etc. But I'm to lazy to do it, so I divide this pile in 2, and give it to you, asking you to do this job.-->
-    <!--I distribute a task, you do the job. Or, distribute it in turns, until stash is small enough to do a job.-->
-    <!--Then you return results to distributor, whou in turn return it back thtough hierarchy. F/J also includes something called (work-stealing), that makes "distributors" do real job too, instead of just waiting.-->
-    <!--Please forgive me for oversimplification, we are talking about essentials.-->
+  <h2>Divide and conquer algorithm</h2>
+  <ul class="fragment">
+    <li><h3>Recursive solutions</h3></li>
+    <li><h3>Distributed computations</h3></li>
+  </ul>
+  <!--Now, what about a bit more complex example. Imagine I need to do a lot of repetitive operation, for example process a huge collection with million elements, and do some operation with every one.-->
+  <!--I'd like to be fast and utilise as many cores as possible and utilise them to the fullest.-->
+  <!-- Card example-->
+  <!--Divide and conquer algorithm framework. Get the task (count students in audience).-->
+  <!--I have a pile of paper, and I have to draw something on it. It may be a smile, my signature, etc. But I'm to lazy to do it, so I divide this pile in 2, and give it to you, asking you to do this job.-->
+  <!--I distribute a task, you do the job. Or, distribute it in turns, until stash is small enough to do a job.-->
+  <!--Then you return results to distributor, whou in turn return it back thtough hierarchy. F/J also includes something called (work-stealing), that makes "distributors" do real job too, instead of just waiting.-->
+  <!--Please forgive me for oversimplification, we are talking about essentials.-->
+  <!-- So, give me the cards with writings on them -->
 </section>
 
 <section title="Akka details">
@@ -321,6 +350,7 @@ val futureCoffee = for {
         <!--Every message that has a sender, has a return-address, so actors can reply on messages they got. Interesting point here is, that ActorRef for any actor behaves exactly same way: both if actor is managed by same thread, same jvm and even if it's accessible through network.-->
         <!--This is a concept of Location Transparency, and it's a very reason, why you shall care about your messages being serializable.-->
         <!--Serialization will be also handled by Akka underneath, usually, only when message is leaving JVM it has been created in.-->
+      <!--Santa can be here, he can be somewhere else, he can even be not a single actor, but a pool of them -->
     </section>
     <section title="Serialization">
         <div>Serialization - is a process of converting internal representation to a transferable format.</div>
@@ -342,30 +372,31 @@ val futureCoffee = for {
             <li class="fragment">Can have a return address</li>
         </ul>
     </section>
-    <section title="Supervision chain">
-        <img src="/assets/akka-hierarchy.png" />
-        <div class="fragment">akka://GridSchool/user/<strong style="color: red">Speakers/</strong>Pavel</div>
-        <div class="fragment">akka://GridSchool/user/Speakers/<strong style="color: red">Pavel</strong></div>
-        <!--If we look at the path, we will notice another interesting fact. Actors are organized in hierarchial structure. For every actor (except root one, created by system) we have a "parent" actor.-->
-        <!--The ideology of Akka is that actors will fail. No exception. So, "Let if fail", expect that failure, making it a part of a normal work process. Be ready to recover it, to handle it gracefully.-->
-        <!--Akka gives a powerful mechanism form that.-->
-        <!--First - it lifts the necessity of creating actors manually. In thruth, you are even not allowed to instantiate an Actor manually.-->
-        <!--Second, actor is created only from other actor, naturally forcing every actor to have a parent.-->
-        <!--Third, as every parent is responsible for he's children, actor's parent is responsible for their recovery. Depending on a Supervision Strategy actors can be stopped and restarted by their parent.-->
-    </section>
+  <!--&lt;!&ndash; TODO cut it of? &ndash;&gt;-->
+    <!--<section title="Supervision chain">-->
+        <!--<img src="/assets/akka-hierarchy.png" />-->
+        <!--<div class="fragment">akka://GridSchool/user/<strong style="color: red">Speakers/</strong>Pavel</div>-->
+        <!--<div class="fragment">akka://GridSchool/user/Speakers/<strong style="color: red">Pavel</strong></div>-->
+        <!--&lt;!&ndash;If we look at the path, we will notice another interesting fact. Actors are organized in hierarchial structure. For every actor (except root one, created by system) we have a "parent" actor.&ndash;&gt;-->
+        <!--&lt;!&ndash;The ideology of Akka is that actors will fail. No exception. So, "Let if fail", expect that failure, making it a part of a normal work process. Be ready to recover it, to handle it gracefully.&ndash;&gt;-->
+        <!--&lt;!&ndash;Akka gives a powerful mechanism form that.&ndash;&gt;-->
+        <!--&lt;!&ndash;First - it lifts the necessity of creating actors manually. In thruth, you are even not allowed to instantiate an Actor manually.&ndash;&gt;-->
+        <!--&lt;!&ndash;Second, actor is created only from other actor, naturally forcing every actor to have a parent.&ndash;&gt;-->
+        <!--&lt;!&ndash;Third, as every parent is responsible for he's children, actor's parent is responsible for their recovery. Depending on a Supervision Strategy actors can be stopped and restarted by their parent.&ndash;&gt;-->
+    <!--</section>-->
 </section>
 <section> <!-- Akka Benefits and Limitations -->
     <section title="Akka Benefits…">
         <ul>
             <li class="fragment"><i class="glyphicon glyphicon-plus-sign text-success"></i> While processing a message your code can be written in single-thread manner.</li>
             <li class="fragment"><i class="glyphicon glyphicon-plus-sign text-success"></i> System becomes low coupled and easy to test.</li>
-            <li class="fragment"><i class="glyphicon glyphicon-plus-sign text-success"></i> Powerful FSM mechanism inside</li>
+            <li class="fragment"><i class="glyphicon glyphicon-plus-sign text-success"></i> Often makes system deterministic</li>
+            <li class="fragment"><i class="glyphicon glyphicon-plus-sign text-success"></i> and easy to decribe</li>
         </ul>
     </section>
     <section title="… and Limitations">
         <ul>
         <li class="fragment"><i class="glyphicon glyphicon-minus-sign text-danger"></i> Messages must be immutable.</li>
-        <li class="fragment"><i class="glyphicon glyphicon-minus-sign text-danger"></i> It's harder to process</li>
         <li class="fragment"><i class="glyphicon glyphicon-minus-sign text-danger"></i> You loose a fraction of statical code analysis, as actors can send and receive any message.</li>
         <li class="fragment"><i class="glyphicon glyphicon-minus-sign text-danger"></i> Harder to chain and compose than Futures</li>
         <li class="fragment"><i class="glyphicon glyphicon-minus-sign text-danger"></i> Sometimes harder to debug</li>
@@ -383,7 +414,14 @@ val futureCoffee = for {
         <div><strong>Akka</strong> uses ThreadPool behind, to process messages in actors and fast concurrent message queue (that have synchronisation and locking inside).</div>
     </section>
 </section>
-<section><h1>Thank you!</h1></section>
+<section>
+  <h1>Questions?</h1>
+  <!--<h3>Write it down on a card, with a return address, drop on my table.</h3>-->
+  <h3 class="fragment">Or email: pavel.dionisev@cern.ch</h3>
+</section>
+<section>
+  <h1>Thank you!</h1>
+</section>
 
 <!--Questions-->
 
